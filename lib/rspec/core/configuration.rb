@@ -1155,11 +1155,6 @@ module RSpec
         end
       end
 
-      # @private
-      def safe_include(mod, host)
-        host.__send__(:include, mod) unless host < mod
-      end
-
       if RSpec::Support::RubyFeatures.module_prepends_supported?
         # @private
         def safe_prepend(mod, host)
@@ -1178,10 +1173,20 @@ module RSpec
       # @private
       if RUBY_VERSION.to_f >= 1.9
         # @private
+        def safe_include(mod, host)
+          host.__send__(:include, mod) unless host < mod
+        end
+
+        # @private
         def safe_extend(mod, host)
           host.extend(mod) unless host.singleton_class < mod
         end
       else
+        # @private
+        def safe_include(mod, host)
+          host.__send__(:include, mod) unless host.included_modules.include?(mod)
+        end
+
         # @private
         def safe_extend(mod, host)
           host.extend(mod) unless (class << host; self; end).included_modules.include?(mod)
