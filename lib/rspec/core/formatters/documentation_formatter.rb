@@ -1,3 +1,5 @@
+require 'faker'
+
 RSpec::Support.require_rspec_core "formatters/base_text_formatter"
 
 module RSpec
@@ -14,6 +16,7 @@ module RSpec
         end
 
         def example_group_started(notification)
+          `say "#{notification.group.description}"`
           output.puts if @group_level == 0
           output.puts "#{current_indentation}#{notification.group.description.strip}"
 
@@ -25,6 +28,7 @@ module RSpec
         end
 
         def example_passed(passed)
+          `say "alllllll yeahhhhhhhh #{Faker::Company.catch_phrase}"`
           output.puts passed_output(passed.example)
         end
 
